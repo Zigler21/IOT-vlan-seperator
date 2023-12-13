@@ -76,7 +76,16 @@ class AnomalyIDS:
 
         def detect_iot_attack(self, packet):
             # Logic to determine if the packet is targeting an IoT device
-            return True  # Placeholder
+            if packet.haslayer(http.HTTPRequest):
+                url = urlparse(packet[http.HTTPRequest].Path.decode()).path
+                if url == '/':
+                    print('hello')
+                    return True
+            elif packet.haslayer(http.HTTPResponse):
+                # Check for specific headers or content in the response
+                if packet[http.HTTPResponse].Content == 'application/json':
+                    return True
+            return False
 
         def redirect_to_honeypot(self, packet):
             honeypot_url = "http://localhost:5001"
