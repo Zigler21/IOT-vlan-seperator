@@ -6,9 +6,12 @@ import os
 import sys
 import pandas as pd
 from sqlalchemy import create_engine
+from ids import AnomalyIDS
 
 # Initialize Flask app for user interface
 app = Flask(__name__)
+
+ids = AnomalyIDS("phy0")
 
 # Database engine 
 engine = create_engine('sqlite:///devices.db')
@@ -31,4 +34,5 @@ def add_device():
     return render_template('add_device.html')
 
 if __name__ == '__main__':
+    ids.start_sniffing    
     app.run(debug=True, host='0.0.0.0')
