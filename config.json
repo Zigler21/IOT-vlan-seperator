@@ -1,0 +1,8 @@
+{
+    "device_type": "cisco_ios",
+    "host": "10.10.10.10",
+    "username": "admin",
+    "password": "yourpassword",
+    "port": 22,
+    "secret": "secret"
+}

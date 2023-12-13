@@ -7,6 +7,7 @@ import sys
 import pandas as pd
 from sqlalchemy import create_engine
 from ids import AnomalyIDS
+import vlan
 
 # Initialize Flask app for user interface
 app = Flask(__name__)
