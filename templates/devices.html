@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connected Devices</title>
+</head>
+<body>
+    <h1>Connected Devices to VLAN</h1>
+    <ul>
+        <li id="device-1">Device 1 <button onclick="removeDevice(1)">Disconnect</button></li>
+        <li id="device-2">Device 2 <button onclick="removeDevice(2)">Disconnect</button></li>
+        <li id="device-3">Device 3 <button onclick="removeDevice(3)">Disconnect</button></li>
+        <!-- Add more devices as needed -->
+    </ul>
+
+    <script>
+        function removeDevice(deviceId) {
+            var device = document.getElementById("device-" + deviceId);
+            device.parentNode.removeChild(device);
+        }
+    </script>
+</body>
+</html>

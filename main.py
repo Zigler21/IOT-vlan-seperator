@@ -7,12 +7,12 @@ import sys
 import pandas as pd
 from sqlalchemy import create_engine
 from ids import AnomalyIDS
-import vlan
+
 
 # Initialize Flask app for user interface
 app = Flask(__name__)
 
-ids = AnomalyIDS("phy0")
+#ids = AnomalyIDS("phy0")
 
 # Database engine 
 engine = create_engine('sqlite:///devices.db')
@@ -34,6 +34,11 @@ def add_device():
         pass
     return render_template('add_device.html')
 
-if __name__ == '__main__':
-    ids.start_sniffing    
-    app.run(debug=True, host='0.0.0.0')
+@app.route('/devices', methods=['GET', 'POST'])
+def devices():
+    # Code to retrieve devices from database
+    return render_template('devices.html', devices=devices) # Pass devices to the template
+
+if __name__ == '__main__':    
+    app.run( debug=True, host='0.0.0.0')
+
