@@ -10,12 +10,8 @@ from sqlalchemy import create_engine
 # Initialize Flask app for user interface
 app = Flask(__name__)
 
-# Database engine (modify as per your database)
+# Database engine 
 engine = create_engine('sqlite:///devices.db')
-
-# Your NIDS, Firewall, and Honeypot initialization code here
-# ...
-
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -33,9 +29,6 @@ def add_device():
         # Code to add a new device
         pass
     return render_template('add_device.html')
-
-# Additional routes and functions for other features
-# ...
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
