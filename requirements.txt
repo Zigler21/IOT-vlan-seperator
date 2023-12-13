@@ -1,0 +1,5 @@
+Flask
+scapy
+python-nmap
+pandas
+sqlalchemy
