@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 import requests
 from flask import Flask, redirect
 from scapy.all import sniff, ARP
+import subprocess
 
 honeypot_url = 'http://0.0.0.0'  # replace with your actual URL
 
@@ -94,6 +95,16 @@ def isolate_device(packet):
 # Start sniffing packets
 sniff(prn=process_packet)
 
+def isolate_device(packet):
+        # Get the IP address of the IoT device
+        ip_address = packet[ARP].psrc
+
+        # Add a rule to iptables to drop all packets to/from this IP address
+        subprocess.run(["sudo", "iptables", "-A", "INPUT", "-s", ip_address, "-j", "DROP"])
+        subprocess.run(["sudo", "iptables", "-A", "OUTPUT", "-d", ip_address, "-j", "DROP"])
+
+        print(f"Isolated device {ip_address}")
+
 def redirect_to_honeypot(packet):
     # Process the packet if necessary
     # ...
@@ -111,6 +122,6 @@ if process_packet(packet):
 if __name__ == '__main__':    
     app.run( debug=True, host='0.0.0.0')
     if packet == "iotpackets.csv":
-        redirect_to_honeypot() #or as i like to call it, sending it to the electric chair. (;
+        redirect_to_honeypot(process_packet) and isolate_device(process_packet) #or as i like to call it, sending it to the electric chair. (;
     else:
         pass
