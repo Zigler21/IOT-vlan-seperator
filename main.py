@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 packet = AnomalyIDS("phy0")
 
-#ids = AnomalyIDS("phy0")
+#ids = AnomalyIDS("phy0")k
 def return_to_honeypot(packet):
     # This is a simplified and notional representation. Actual redirection would be more complex.
     try:
@@ -88,5 +88,3 @@ if process_packet(packet):
 
 if __name__ == '__main__':    
     app.run( debug=True, host='0.0.0.0')
-    
-
