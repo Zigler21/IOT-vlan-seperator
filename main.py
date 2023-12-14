@@ -84,10 +84,11 @@ def process_packet(packet):
 
 def is_iot_device(packet):
     # Replace with actual logic to identify IoT devices
-    return packet.haslayer(ARP) and packet[ARP].psrc.startswith('192.168.')
+    return packet.haslayer(ARP) and (packet[ARP].psrc.startswith('192.168.') or packet[ARP].psrc.startswith('10.0.'))
 
 def isolate_device(packet):
     # Replace with actual logic to isolate the device
+
     print(f"Isolating device {packet[ARP].psrc}")
 
 # Start sniffing packets
