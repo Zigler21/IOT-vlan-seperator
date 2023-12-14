@@ -3,7 +3,7 @@ import scapy.all as scapy
 import nmap
 import socket
 import os
-import webbrowser
+import threading
 import sys
 import pandas as pd
 from sqlalchemy import create_engine
@@ -12,11 +12,15 @@ from http.client import HTTPConnection as http
 from urllib.parse import urlparse
 import requests
 from flask import Flask, redirect
+from scapy.all import sniff, ARP
 
 honeypot_url = 'http://0.0.0.0'  # replace with your actual URL
 
 # Initialize Flask app for user interface
 app = Flask(__name__)
+
+iotpacket = 'iotpackets.csv'
+normalpacket = 'normalpackets.csv'
 
 packet = AnomalyIDS("phy0")
 
@@ -72,6 +76,23 @@ def process_packet(packet):
 
 
 
+def process_packet(packet):
+    # Check if it's an IoT device
+    if is_iot_device(packet):
+        # If it is, isolate it
+        isolate_device(packet)
+
+def is_iot_device(packet):
+    # Replace with actual logic to identify IoT devices
+    return packet.haslayer(ARP) and packet[ARP].psrc.startswith('192.168.1.1')
+
+def isolate_device(packet):
+    # Replace with actual logic to isolate the device
+    print(f"Isolating device {packet[ARP].psrc}")
+
+# Start sniffing packets
+sniff(prn=process_packet)
+
 def redirect_to_honeypot(packet):
     # Process the packet if necessary
     # ...
@@ -88,3 +109,7 @@ if process_packet(packet):
 
 if __name__ == '__main__':    
     app.run( debug=True, host='0.0.0.0')
+    if packet == "iotpackets.csv":
+        redirect_to_honeypot() #or as i like to call it, sending it to the electric chair. (;
+    else:
+        pass

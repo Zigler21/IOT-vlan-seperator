@@ -3,3 +3,4 @@ scapy
 python-nmap
 pandas
 sqlalchemy
+requests
