@@ -112,8 +112,19 @@ def add_device():
 @app.route('/devices', methods=['GET', 'POST'])
 @login_required
 def devices():
-    # Code to retrieve devices from database
-    return render_template('devices.html', devices=devices) # Pass devices to the template
+    # Connect to the database
+    conn = sqlite3.connect('devices.db')
+    c = conn.cursor()
+
+    # Fetch all devices from the database
+    c.execute("SELECT * FROM devices")
+    devices = c.fetchall()
+
+    # Close the connection
+    conn.close()
+
+    # Pass devices to the template
+    return render_template('devices.html', devices=devices)
 
 @app.route('/logout')
 @login_required
