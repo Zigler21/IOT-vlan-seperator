@@ -4,3 +4,4 @@ python-nmap
 pandas
 sqlalchemy
 requests
+getmac
