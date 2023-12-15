@@ -16,11 +16,18 @@ from scapy.all import sniff, ARP
 import subprocess
 import sqlite3
 from getmac import get_mac_address
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-honeypot_url = 'http://0.0.0.0'  # replace with your actual URL
 
 # Initialize Flask app for user interface
 app = Flask(__name__)
+app.secret_key = 'test1234#@!1D'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+honeypot_url = 'http://0.0.0.0'  # replace with your actual URL
 
 iotpacket = 'iotpackets.csv'
 normalpacket = 'normalpackets.csv'
@@ -29,6 +36,9 @@ packet = AnomalyIDS("phy0")
 
 #ids = AnomalyIDS("phy0")k
 
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
 
 # Database engine 
 engine = create_engine('sqlite:///devices.db')
@@ -54,6 +64,10 @@ if not table_exists:
 conn.commit()
 conn.close()
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -61,11 +75,17 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Process login
-        pass
+        username = request.form['username']
+        password = request.form['password']
+        # Validate the username and password
+        if username == 'admin' and password == 'password':  # Replace with actual validation
+            user = User(1)
+            login_user(user)
+            return redirect('/devices')
     return render_template('login.html')
 
 @app.route('/add_device', methods=['GET', 'POST'])
+@login_required
 def add_device():
     # Get the MAC address using the IP address
     ip_address = "192.168.0.1"  # Replace with the actual IP address
@@ -90,16 +110,17 @@ def add_device():
     return render_template('add_device.html')
 
 @app.route('/devices', methods=['GET', 'POST'])
+@login_required
 def devices():
     # Code to retrieve devices from database
     return render_template('devices.html', devices=devices) # Pass devices to the template
 
-@app.route('/some_route', methods=['GET', 'POST'])
-def some_route():
-    packet = ...  # Get or create the packet
-    if process_packet(packet):
-        return redirect_to_honeypot(packet)
-    # ...
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/login')
+    
 def process_packet(packet):
     # Process the packet data
     # This is just a placeholder. Replace with your actual processing code.

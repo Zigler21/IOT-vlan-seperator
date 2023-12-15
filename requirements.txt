@@ -5,3 +5,4 @@ pandas
 sqlalchemy
 requests
 getmac
+flask-login
