@@ -14,6 +14,8 @@ import requests
 from flask import Flask, redirect
 from scapy.all import sniff, ARP
 import subprocess
+import sqlite3
+from getmac import get_mac_address
 
 honeypot_url = 'http://0.0.0.0'  # replace with your actual URL
 
@@ -26,17 +28,27 @@ normalpacket = 'normalpackets.csv'
 packet = AnomalyIDS("phy0")
 
 #ids = AnomalyIDS("phy0")k
-def return_to_honeypot(packet):
-    # This is a simplified and notional representation. Actual redirection would be more complex.
-    try:
-        if packet.haslayer(http.HTTPRequest):
-            url = honeypot_url + urlparse(packet[http.HTTPRequest].Path.decode()).path
-            requests.get(url)
-    except Exception as e:
-        print(f"Error redirecting to honeypot: {e}")
+
 
 # Database engine 
 engine = create_engine('sqlite:///devices.db')
+
+# Connect to SQLite database (or create it if it doesn't exist)
+conn = sqlite3.connect('devices.db')
+
+# Create a cursor
+c = conn.cursor()
+
+# Create table
+c.execute('''
+    CREATE TABLE devices
+    (mac_address text, ip_address text, honeypot_status integer)
+''')
+
+# Commit the changes and close the connection
+conn.commit()
+conn.close()
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -50,9 +62,26 @@ def login():
 
 @app.route('/add_device', methods=['GET', 'POST'])
 def add_device():
+    # Get the MAC address using the IP address
+    ip_address = "192.168.0.1"  # Replace with the actual IP address
     if request.method == 'POST':
-        # Code to add a new device
-        pass
+        mac_address = request.form['mac_address']
+        ip_address = request.form['ip_address']
+        honeypot_status = int(request.form['honeypot_status'])
+
+        # Connect to the database
+        conn = sqlite3.connect('devices.db')
+        c = conn.cursor()
+
+        # Insert the device into the table
+        c.execute('''
+            INSERT INTO devices VALUES (?, ?, ?)
+        ''', (mac_address, ip_address, honeypot_status))
+
+        # Commit the changes and close the connection
+        conn.commit()
+        conn.close()
+
     return render_template('add_device.html')
 
 @app.route('/devices', methods=['GET', 'POST'])
@@ -75,7 +104,14 @@ def process_packet(packet):
         return False
 
 
-
+def return_to_honeypot(packet):
+    # This is a simplified and notional representation. Actual redirection would be more complex.
+    try:
+        if packet.haslayer(http.HTTPRequest):
+            url = honeypot_url + urlparse(packet[http.HTTPRequest].Path.decode()).path
+            requests.get(url)
+    except Exception as e:
+        print(f"Error redirecting to honeypot: {e}")
 
 def process_packet(packet):
     # Check if it's an IoT device
