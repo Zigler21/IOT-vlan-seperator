@@ -80,7 +80,7 @@ def add_device():
 
         # Insert the device into the table
         c.execute('''
-            INSERT INTO devices VALUES (?, ?, ?)
+            INSERT INTO devices VALUES (mac_address text, ip_address text, honeypot_status integer)
         ''', (mac_address, ip_address, honeypot_status))
 
         # Commit the changes and close the connection
@@ -128,13 +128,13 @@ def is_iot_device(packet):
     # Replace with actual logic to identify IoT devices
     return packet.haslayer(ARP) and (packet[ARP].psrc.startswith('192.168.') or packet[ARP].psrc.startswith('10.0.'))
 
-def isolate_device(packet):
-    # Replace with actual logic to isolate the device
-
-    print(f"Isolating device {packet[ARP].psrc}")
+#def isolate_device(packet):
+#    # Replace with actual logic to isolate the device
+#
+#    print(f"Isolating device {packet[ARP].psrc}")
 
 # Start sniffing packets
-sniff(prn=process_packet)
+#sniff(prn=process_packet)
 
 def isolate_device(packet):
         # Get the IP address of the IoT device
@@ -156,13 +156,13 @@ def redirect_to_honeypot(packet):
     # Redirect to the honeypot URL
     return redirect(honeypot_url, code=302)
 
-if process_packet(packet):
-    redirect_to_honeypot(packet)
+#if process_packet(packet):
+#    redirect_to_honeypot(packet)
 
 
 if __name__ == '__main__':    
-    app.run( debug=True, host='0.0.0.0')
-    if packet == "iotpackets.csv":
-        redirect_to_honeypot(process_packet) and isolate_device(process_packet) #or as i like to call it, sending it to the electric chair. (;
-    else:
-        pass
+    app.run( debug=True, host='127.0.0.1')
+    #if packet == "iotpackets.csv":
+    #    redirect_to_honeypot(process_packet) and isolate_device(process_packet) #or as i like to call it, sending it to the electric chair. (;
+    #else:
+    #    pass
