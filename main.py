@@ -40,10 +40,15 @@ conn = sqlite3.connect('devices.db')
 c = conn.cursor()
 
 # Create table
-c.execute('''
-    CREATE TABLE devices
-    (mac_address text, ip_address text, honeypot_status integer)
-''')
+# Check if the table already exists
+c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='devices'")
+table_exists = c.fetchone()
+
+if not table_exists:
+    c.execute('''
+        CREATE TABLE devices
+        (mac_address text, ip_address text, honeypot_status integer)
+    ''')
 
 # Commit the changes and close the connection
 conn.commit()
