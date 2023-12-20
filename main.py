@@ -41,10 +41,11 @@ class User(UserMixin):
         self.id = id
 
 # Database engine 
-engine = create_engine('sqlite:///devices.db')
-
+if not os.path.exists('devices.db'): 
+    engine = create_engine('sqlite:///devices.db')
+else:
 # Connect to SQLite database (or create it if it doesn't exist)
-conn = sqlite3.connect('devices.db')
+    conn = sqlite3.connect('devices.db')
 
 # Create a cursor
 c = conn.cursor()
@@ -194,6 +195,6 @@ if __name__ == '__main__':
     # Start sniffing packets
     sniff(prn=process_packet)
     if packet == "iotpackets.csv":
-        redirect_to_honeypot(process_packet) and isolate_device(process_packet) #or as i like to call it, sending it to the electric chair. (;
+        redirect_to_honeypot(process_packet) and isolate_device(process_packet) #send it to the void
     else:
         pass
