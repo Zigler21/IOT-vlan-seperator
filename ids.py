@@ -108,5 +108,5 @@ class AnomalyIDS:
             pass
 
     # Create an instance of AnomalyIDS and start sniffing
-    ids = AnomalyIDS("Software Loopback Interface 1")  # replace "eth0" with your network interface
+    ids = AnomalyIDS("Software Loopback Interface 1" OR "lo")  # if this is not the loopback interface ask the user for it
     ids.start_sniffing()
