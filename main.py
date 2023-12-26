@@ -43,6 +43,7 @@ class User(UserMixin):
 # Database engine 
 if not os.path.exists('devices.db'): 
     engine = create_engine('sqlite:///devices.db')
+    conn = sqlite3.connect('devices.db')
 else:
 # Connect to SQLite database (or create it if it doesn't exist)
     conn = sqlite3.connect('devices.db')
@@ -173,7 +174,7 @@ def isolate_device(packet):
         ip_address = packet[ARP].psrc
 
         # Add a rule to iptables to drop all packets to/from this IP address
-        subprocess.run(["sudo", "iptables", "-A", "INPUT", "-s", ip_address, "-j", "DROP"])
+        subprocess.run(["sudo", "iptables", "-A", "INPUT", "-s", ip_address, "-j", "BLOCK"])
         subprocess.run(["sudo", "iptables", "-A", "OUTPUT", "-d", ip_address, "-j", "DROP"])
 
         print(f"Isolated device {ip_address}")
@@ -195,6 +196,6 @@ if __name__ == '__main__':
     # Start sniffing packets
     sniff(prn=process_packet)
     if packet == "iotpackets.csv":
-        redirect_to_honeypot(process_packet) and isolate_device(process_packet) #send it to the void
+        redirect_to_honeypot(process_packet) and isolate_device(process_packet) #send iot packets to the void address
     else:
         pass
