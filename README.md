@@ -9,4 +9,4 @@ running ```python3 main.py``` will run the program and start and a web server wi
 
 any traffic sent through will be analyzed and will either be sent to a void IP (if it is a IOT Device) or just to the normal routing address.
 
-also read the [todo](https://github.com/Zigler21/IOT-vlan-seperator/blob/main/TODO.md)
+also read the [todo](https://github.com/Zigler21/IOT-vlan-seperator/wiki/TODO)
